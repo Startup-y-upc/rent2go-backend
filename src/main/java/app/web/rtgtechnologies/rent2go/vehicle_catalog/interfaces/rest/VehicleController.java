@@ -267,8 +267,8 @@ public class VehicleController {
         for (org.springframework.web.multipart.MultipartFile f : files) {
             String imageUrl = cloudinaryStorageService.upload(f);
 
-            // UploadVehicleImageCommand validates that at least one of imagePath or imageUrl is provided
-            UploadVehicleImageResource resource = new UploadVehicleImageResource(null, imageUrl, null, null);
+            // imagePath as empty string, imageUrl from Cloudinary
+            UploadVehicleImageResource resource = new UploadVehicleImageResource("", imageUrl, null, null);
             var command = UploadVehicleImageCommandFromResourceAssembler.toCommand(id, resource);
             vehicle = vehicleCommandService.handle(command);
         }
