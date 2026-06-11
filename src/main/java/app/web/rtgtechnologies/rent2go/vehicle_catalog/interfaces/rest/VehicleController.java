@@ -232,9 +232,9 @@ public class VehicleController {
     @Operation(summary = "Upload a vehicle image (multipart file)")
     public ResponseEntity<VehicleResource> uploadVehicleImageFile(
         @PathVariable Long id,
-        @RequestPart("file") org.springframework.web.multipart.MultipartFile file,
-        @RequestPart(value = "isPrimary", required = false) Boolean isPrimary,
-        @RequestPart(value = "imageOrder", required = false) Integer imageOrder
+        @RequestParam("file") org.springframework.web.multipart.MultipartFile file,
+        @RequestParam(value = "isPrimary", required = false) Boolean isPrimary,
+        @RequestParam(value = "imageOrder", required = false) Integer imageOrder
     ) throws java.io.IOException {
 
         String imageUrl = cloudinaryStorageService.upload(file);
@@ -259,9 +259,9 @@ public class VehicleController {
     @Operation(summary = "Upload multiple vehicle images (multipart batch)")
     public ResponseEntity<VehicleResource> uploadVehicleImagesBatchMultipart(
         @PathVariable Long id,
-        @RequestPart("files") java.util.List<org.springframework.web.multipart.MultipartFile> files,
-        @RequestPart(value = "isPrimary", required = false) java.util.List<Boolean> isPrimaryList,
-        @RequestPart(value = "imageOrder", required = false) java.util.List<Integer> imageOrderList
+        @RequestParam("files") java.util.List<org.springframework.web.multipart.MultipartFile> files,
+        @RequestParam(value = "isPrimary", required = false) java.util.List<Boolean> isPrimaryList,
+        @RequestParam(value = "imageOrder", required = false) java.util.List<Integer> imageOrderList
     ) throws java.io.IOException {
 
         Vehicle vehicle = null;
