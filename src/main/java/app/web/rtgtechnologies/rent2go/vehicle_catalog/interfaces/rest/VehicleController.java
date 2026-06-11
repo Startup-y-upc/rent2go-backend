@@ -251,29 +251,24 @@ public class VehicleController {
      * POST /api/v1/vehicles/{id}/images/upload/batch
      *
      * Upload multiple image files for a vehicle in a single multipart request.
-     * The request should include multiple `files` parts and optional parallel arrays
-     * `isPrimary` and `imageOrder` to provide metadata per file (order must match files order).
+     * The request should include multiple `files` parts.
+     * No isPrimary or imageOrder parameters are accepted for batch uploads.
      */
     @PostMapping(path = "/{id}/images/upload/batch", consumes = {"multipart/form-data"})
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Upload multiple vehicle images (multipart batch)")
     public ResponseEntity<VehicleResource> uploadVehicleImagesBatchMultipart(
         @PathVariable Long id,
-        @RequestParam("files") java.util.List<org.springframework.web.multipart.MultipartFile> files,
-        @RequestParam(value = "isPrimary", required = false) java.util.List<Boolean> isPrimaryList,
-        @RequestParam(value = "imageOrder", required = false) java.util.List<Integer> imageOrderList
+        @RequestParam("files") java.util.List<org.springframework.web.multipart.MultipartFile> files
     ) throws java.io.IOException {
 
         Vehicle vehicle = null;
 
-        for (int i = 0; i < files.size(); i++) {
-            org.springframework.web.multipart.MultipartFile f = files.get(i);
+        for (org.springframework.web.multipart.MultipartFile f : files) {
             String imageUrl = cloudinaryStorageService.upload(f);
 
-            Boolean isPrimary = (isPrimaryList != null && isPrimaryList.size() > i) ? isPrimaryList.get(i) : null;
-            Integer order = (imageOrderList != null && imageOrderList.size() > i) ? imageOrderList.get(i) : null;
-
-            UploadVehicleImageResource resource = new UploadVehicleImageResource(null, imageUrl, isPrimary, order);
+            // UploadVehicleImageCommand validates that at least one of imagePath or imageUrl is provided
+            UploadVehicleImageResource resource = new UploadVehicleImageResource(null, imageUrl, null, null);
             var command = UploadVehicleImageCommandFromResourceAssembler.toCommand(id, resource);
             vehicle = vehicleCommandService.handle(command);
         }
